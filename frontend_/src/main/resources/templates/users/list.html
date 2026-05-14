@@ -1,41 +1,123 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách Người dùng</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản lý Người dùng - TINHNGUYEN.com</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            color: #1976d2 !important;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
-<div class="container mt-5">
-    <h2>Danh sách Người dùng</h2>
-    <a href="/" class="btn btn-secondary mb-3">Trang Chủ</a>
-    <table class="table table-striped mt-3 shadow-sm">
-        <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Tên đăng nhập</th>
-            <th>Họ và Tên</th>
-            <th>Email</th>
-            <th>Vai trò</th>
-            <th>Hành Động</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="user : ${users}">
-            <td th:text="${user.id}">1</td>
-            <td th:text="${user.username}">username</td>
-            <td th:text="${user.fullName}">Họ tên</td>
-            <td th:text="${user.email}">email@example.com</td>
-            <td>
-                <span class="badge bg-secondary" th:text="${user.role}">ROLE_USER</span>
-            </td>
-            <td>
-                <a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-sm btn-info text-white">Chi tiết</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-primary fw-bold" th:href="@{/}">
+                TINH<strong>NGUYEN</strong>.com
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}">
+                            <i class="fas fa-home"></i> Trang Chủ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/activities}">
+                            <i class="fas fa-heart"></i> Quản Lý Hoạt Động
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/registrations}">
+                            <i class="fas fa-list"></i> Quản Lý Đăng Ký
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/users}">
+                            <i class="fas fa-users"></i> Quản Lý Người Dùng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-sign-out-alt"></i> Đăng Xuất
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <!-- Header -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="card-title text-primary mb-0">
+                        <i class="fas fa-users"></i> Quản lý Người dùng
+                    </h2>
+                    <button type="button" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Tạo tài khoản mới
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên</th>
+                                <th>Email</th>
+                                <th>Vai trò</th>
+                                <th>Mã Sinh Viên</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user : ${users}">
+                                <td th:text="${user.id}">1</td>
+                                <td>
+                                    <i class="fas fa-user-circle text-primary"></i>
+                                    <span th:text="${user.fullName}">Tên</span>
+                                    <small class="text-muted d-block" th:text="${user.username}"></small>
+                                </td>
+                                <td th:text="${user.email}">email@example.com</td>
+                                <td>
+                                    <span class="badge bg-secondary" th:classappend="${user.role == 'ROLE_ADMIN' ? 'bg-danger' : (user.role == 'ROLE_ORGANIZATION' ? 'bg-primary' : 'bg-secondary')}">
+                                        <i class="fas" th:classappend="${user.role == 'ROLE_ADMIN' ? 'fa-crown' : (user.role == 'ROLE_ORGANIZATION' ? 'fa-building' : 'fa-user')}"></i> 
+                                        <span th:text="${user.role}">Vai trò</span>
+                                    </span>
+                                </td>
+                                <td th:text="${user.studentCode}">SV123</td>
+                                <td>
+                                    <a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-sm btn-info text-white">
+                                        <i class="fas fa-eye"></i> Chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

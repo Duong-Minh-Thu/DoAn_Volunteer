@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Thêm/Sửa Hoạt Động - TINHNGUYEN.com</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand text-primary fw-bold" href="home.html">
+                TINH<strong>NGUYEN</strong>.com
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="home.html">
+                            <i class="fas fa-home"></i> Trang Chủ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="activities.html">
+                            <i class="fas fa-heart"></i> Quản Lý Hoạt Động
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="statistics.html">
+                            <i class="fas fa-chart-bar"></i> Thống Kê
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="users.html">
+                            <i class="fas fa-users"></i> Quản Lý Người Dùng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">
+                            <i class="fas fa-sign-out-alt"></i> Đăng Xuất
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-plus-circle"></i> Thêm Hoạt Động Tình Nguyện Mới
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="#" method="post">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label for="name" class="form-label fw-bold">
+                                        <i class="fas fa-tag text-primary"></i> Tên hoạt động <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="name" name="name" required
+                                           placeholder="VD: Hiến máu nhân đạo..." value="Tặng quà cho trẻ em nghèo">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="time" class="form-label fw-bold">
+                                        <i class="fas fa-clock text-primary"></i> Thời gian <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="time" name="time" required
+                                           placeholder="VD: 15/12/2025 08:00" value="25/12/2025 09:00">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="location" class="form-label fw-bold">
+                                        <i class="fas fa-map-marker-alt text-primary"></i> Địa điểm <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="location" name="location" required
+                                           placeholder="VD: Trung tâm Y tế..." value="Trung tâm Bảo trợ Trẻ em Gò Vấp">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="maxVolunteers" class="form-label fw-bold">
+                                        <i class="fas fa-users text-primary"></i> Số lượng tình nguyện viên <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="number" class="form-control form-control-lg" id="maxVolunteers" name="maxVolunteers" 
+                                           required min="1" placeholder="VD: 30" value="40">
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="scorePoints" class="form-label fw-bold">
+                                        <i class="fas fa-star text-primary"></i> Điểm thưởng <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="number" class="form-control form-control-lg" id="scorePoints" name="scorePoints" 
+                                           required min="1" placeholder="VD: 10" value="15">
+                                </div>
+                                
+                                <div class="col-12">
+                                    <label for="description" class="form-label fw-bold">
+                                        <i class="fas fa-info-circle text-primary"></i> Mô tả chi tiết <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea class="form-control" id="description" name="description" rows="4" required
+                                              placeholder="Mô tả chi tiết về hoạt động, yêu cầu, lưu ý...">Tổ chức chương trình tặng quà Giáng sinh cho các em nhỏ tại trung tâm. Các tình nguyện viên sẽ tham gia chuẩn bị quà, tổ chức trò chơi và sinh hoạt cùng các em.</textarea>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="d-flex justify-content-between">
+                                <a href="activities.html" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-arrow-left"></i> Quay lại
+                                </a>
+                                <div>
+                                    <button type="reset" class="btn btn-outline-warning btn-lg me-2">
+                                        <i class="fas fa-undo"></i> Đặt lại
+                                    </button>
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="fas fa-save"></i> Lưu hoạt động
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Help Card -->
+                <div class="card mt-4 border-info">
+                    <div class="card-body">
+                        <h6 class="card-title text-info">
+                            <i class="fas fa-lightbulb"></i> Lưu ý khi tạo hoạt động
+                        </h6>
+                        <ul class="mb-0 text-muted small">
+                            <li>Tên hoạt động nên ngắn gọn, dễ hiểu</li>
+                            <li>Thời gian theo định dạng: DD/MM/YYYY HH:MM</li>
+                            <li>Địa điểm cần đầy đủ và chính xác</li>
+                            <li>Số lượng TNV phù hợp với quy mô hoạt động</li>
+                            <li>Điểm thưởng tương ứng với mức độ khó khăn</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

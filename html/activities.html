@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản Lý Hoạt Động - TINHNGUYEN.com</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            color: #1976d2 !important;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .status-registered {
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        .btn-sm-custom {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="home.html">
+                TINH<strong>NGUYEN</strong>.com
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="home.html">Trang Chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="activities.html">Quản Lý Hoạt Động</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="statistics.html">Thống Kê</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="users.html">
+                            <i class="fas fa-users"></i> Quản Lý Người Dùng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">
+                            <i class="fas fa-sign-out-alt"></i> Đăng Xuất
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container my-4">
+        <!-- Success/Error Messages -->
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> Hoạt động đã được tạo thành công!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <!-- Header -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="card-title text-primary mb-3">
+                    <i class="fas fa-heart"></i> HOẠT ĐỘNG HIỆN CÓ
+                </h2>
+                <div class="row g-2">
+                    <div class="col-md-8">
+                        <form class="d-flex">
+                            <input type="text" class="form-control me-2" 
+                                   placeholder="Tìm kiếm tên, địa điểm hoặc mô tả..." value="">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="activity-form.html" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Thêm hoạt động
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activities Table -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th><i class="fas fa-calendar-alt"></i> Tên chương trình</th>
+                                <th><i class="fas fa-clock"></i> Thời gian</th>
+                                <th><i class="fas fa-map-marker-alt"></i> Địa điểm</th>
+                                <th><i class="fas fa-users"></i> Số lượng TNV</th>
+                                <th><i class="fas fa-star"></i> Điểm số</th>
+                                <th><i class="fas fa-info-circle"></i> Mô tả</th>
+                                <th><i class="fas fa-cogs"></i> Trạng thái / Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Activity 1 -->
+                            <tr>
+                                <td><strong class="text-primary">Hiến máu nhân đạo</strong></td>
+                                <td><span class="badge bg-info">15/11/2025 08:00</span></td>
+                                <td><i class="fas fa-map-marker-alt text-muted"></i> Bệnh viện Đại học Y</td>
+                                <td><span class="badge bg-secondary">50</span></td>
+                                <td><span class="badge bg-success"><i class="fas fa-star"></i> 10</span></td>
+                                <td class="text-truncate" style="max-width: 200px;">Chương trình hiến máu tình nguyện cho sinh viên</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="registrations.html" class="btn btn-info btn-sm-custom">
+                                            <i class="fas fa-list"></i> DS ĐK
+                                        </a>
+                                        <a href="activity-form.html" class="btn btn-primary btn-sm-custom">
+                                            <i class="fas fa-edit"></i> Sửa
+                                        </a>
+                                        <button class="btn btn-danger btn-sm-custom" onclick="return confirm('Bạn có chắc muốn xóa?')">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Activity 2 -->
+                            <tr>
+                                <td><strong class="text-primary">Dọn dẹp công viên</strong></td>
+                                <td><span class="badge bg-info">20/11/2025 07:00</span></td>
+                                <td><i class="fas fa-map-marker-alt text-muted"></i> Công viên Tao Đàn</td>
+                                <td><span class="badge bg-secondary">30</span></td>
+                                <td><span class="badge bg-success"><i class="fas fa-star"></i> 8</span></td>
+                                <td class="text-truncate" style="max-width: 200px;">Làm sạch môi trường, bảo vệ thiên nhiên</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <!-- Student view - registered -->
+                                        <div class="d-flex flex-column align-items-start">
+                                            <span class="badge bg-success mb-1">
+                                                <i class="fas fa-check-circle"></i> Đã được duyệt
+                                            </span>
+                                            <small class="text-success">
+                                                <i class="fas fa-star"></i> Sẽ nhận 8 điểm
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Activity 3 -->
+                            <tr>
+                                <td><strong class="text-primary">Dạy học cho trẻ em vùng cao</strong></td>
+                                <td><span class="badge bg-info">01/12/2025 09:00</span></td>
+                                <td><i class="fas fa-map-marker-alt text-muted"></i> Xã Tà Năng, Lâm Đồng</td>
+                                <td><span class="badge bg-secondary">20</span></td>
+                                <td><span class="badge bg-success"><i class="fas fa-star"></i> 15</span></td>
+                                <td class="text-truncate" style="max-width: 200px;">Giảng dạy tình nguyện cho trẻ em vùng cao</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <!-- Student view - pending -->
+                                        <div class="d-flex flex-column align-items-start">
+                                            <span class="badge bg-warning text-dark mb-1">
+                                                <i class="fas fa-clock"></i> Chờ phê duyệt
+                                            </span>
+                                            <small class="text-muted">
+                                                <i class="fas fa-hourglass-half"></i> Đang xử lý
+                                            </small>
+                                            <button class="btn btn-sm btn-outline-danger mt-1" onclick="return confirm('Bạn có chắc muốn hủy đăng ký này?')">
+                                                <i class="fas fa-times-circle"></i> Hủy đăng ký
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Activity 4 -->
+                            <tr>
+                                <td><strong class="text-primary">Chăm sóc người già</strong></td>
+                                <td><span class="badge bg-info">05/12/2025 08:30</span></td>
+                                <td><i class="fas fa-map-marker-alt text-muted"></i> Viện dưỡng lão Tân Bình</td>
+                                <td><span class="badge bg-secondary">25</span></td>
+                                <td><span class="badge bg-success"><i class="fas fa-star"></i> 12</span></td>
+                                <td class="text-truncate" style="max-width: 200px;">Hoạt động chăm sóc, trò chuyện với người cao tuổi</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <!-- Student view - not registered -->
+                                        <button class="btn btn-success btn-sm">
+                                            <i class="fas fa-user-plus"></i> Đăng ký
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
