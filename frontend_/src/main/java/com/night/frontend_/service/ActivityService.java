@@ -57,4 +57,34 @@ public class ActivityService {
         }
         return null;
     }
+
+    public boolean createActivity(com.night.frontend_.model.ActivityRequest request) {
+        try {
+            ResponseEntity<ApiResponse<Activity>> response = restTemplate.exchange(
+                    apiUrl,
+                    HttpMethod.POST,
+                    new org.springframework.http.HttpEntity<>(request),
+                    new ParameterizedTypeReference<ApiResponse<Activity>>() {}
+            );
+            return response.getBody() != null && response.getBody().isSuccess();
+        } catch (Exception e) {
+            System.err.println("Error creating activity: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean updateActivity(Long id, com.night.frontend_.model.ActivityRequest request) {
+        try {
+            ResponseEntity<ApiResponse<Activity>> response = restTemplate.exchange(
+                    apiUrl + "/" + id,
+                    HttpMethod.PUT,
+                    new org.springframework.http.HttpEntity<>(request),
+                    new ParameterizedTypeReference<ApiResponse<Activity>>() {}
+            );
+            return response.getBody() != null && response.getBody().isSuccess();
+        } catch (Exception e) {
+            System.err.println("Error updating activity: " + e.getMessage());
+            return false;
+        }
+    }
 }

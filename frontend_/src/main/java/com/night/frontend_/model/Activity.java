@@ -9,6 +9,7 @@ public class Activity {
     private Integer points;
     private Integer maxParticipants;
     private String status;
+    private String startDate;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -33,4 +34,7 @@ public class Activity {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getStartDate() { return startDate; }
+    public void setStartDate(String startDate) { this.startDate = startDate; }
 }

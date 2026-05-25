@@ -73,7 +73,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" th:href="@{/logout}">
                             <i class="fas fa-sign-out-alt"></i> Đăng Xuất
                         </a>
                     </li>
@@ -100,9 +100,9 @@
                     <div class="card-body text-center p-5">
                         <div class="mb-4">
                             <i class="fas fa-user-circle fa-4x text-primary mb-3"></i>
-                            <h2 class="mb-3">Xin chào, Nguyễn Văn Admin!</h2>
+                            <h2 class="mb-3" th:text="'Xin chào, ' + ${username} + '!'">Xin chào, Nguyễn Văn Admin!</h2>
                             <div class="d-flex justify-content-center align-items-center mb-3">
-                                <span class="badge bg-danger me-2 fs-6">
+                                <span class="badge bg-danger me-2 fs-6" th:text="${role}">
                                     <i class="fas fa-crown"></i> ADMIN
                                 </span>
                             </div>

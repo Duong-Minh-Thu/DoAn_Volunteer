@@ -9,13 +9,15 @@ public class CommentResponse {
     private Long activityId;
     private Long studentId;
     private String studentName;
+    private String username;
     private String content;
-    private Long parentCommentId;   // null = bình luận gốc
-    private long replyCount;        // số lượng reply (chỉ dùng cho comment gốc)
+    private Long parentCommentId; // null = bình luận gốc
+    private long replyCount; // số lượng reply (chỉ dùng cho comment gốc)
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public CommentResponse() {}
+    public CommentResponse() {
+    }
 
     public static CommentResponse from(ActivityComment comment) {
         return from(comment, 0L);
@@ -27,6 +29,7 @@ public class CommentResponse {
         r.activityId = comment.getActivity().getId();
         r.studentId = comment.getStudent().getId();
         r.studentName = comment.getStudent().getFullName();
+        r.username = comment.getStudent().getUsername();
         r.content = comment.getContent();
         r.parentCommentId = comment.getParentComment() != null ? comment.getParentComment().getId() : null;
         r.replyCount = replyCount;
@@ -36,30 +39,83 @@ public class CommentResponse {
     }
 
     // ===== Getters & Setters =====
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Long getActivityId() { return activityId; }
-    public void setActivityId(Long activityId) { this.activityId = activityId; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Long getStudentId() { return studentId; }
-    public void setStudentId(Long studentId) { this.studentId = studentId; }
+    public Long getActivityId() {
+        return activityId;
+    }
 
-    public String getStudentName() { return studentName; }
-    public void setStudentName(String studentName) { this.studentName = studentName; }
+    public void setActivityId(Long activityId) {
+        this.activityId = activityId;
+    }
 
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
+    public Long getStudentId() {
+        return studentId;
+    }
 
-    public Long getParentCommentId() { return parentCommentId; }
-    public void setParentCommentId(Long parentCommentId) { this.parentCommentId = parentCommentId; }
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
+    }
 
-    public long getReplyCount() { return replyCount; }
-    public void setReplyCount(long replyCount) { this.replyCount = replyCount; }
+    public String getStudentName() {
+        return studentName;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Long getParentCommentId() {
+        return parentCommentId;
+    }
+
+    public void setParentCommentId(Long parentCommentId) {
+        this.parentCommentId = parentCommentId;
+    }
+
+    public long getReplyCount() {
+        return replyCount;
+    }
+
+    public void setReplyCount(long replyCount) {
+        this.replyCount = replyCount;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }
