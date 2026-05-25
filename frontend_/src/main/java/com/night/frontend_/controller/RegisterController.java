@@ -38,7 +38,7 @@ public class RegisterController {
     }
 
     @PostMapping("/register")
-    public String processRegister(@ModelAttribute RegisterRequest request, Model model, HttpSession session) {
+    public String processRegister(@ModelAttribute("registerRequest") RegisterRequest request, Model model, HttpSession session) {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             model.addAttribute("error", "Mật khẩu xác nhận không khớp!");
             model.addAttribute("registerRequest", request);
@@ -66,19 +66,26 @@ public class RegisterController {
                 model.addAttribute("registerRequest", request);
                 return "register";
             }
-        } catch (HttpClientErrorException e) {
-            // Có thể lấy message từ backend
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
             String errorMsg = "Lỗi hệ thống hoặc dữ liệu không hợp lệ. Vui lòng kiểm tra lại.";
             try {
-                // Thử parse thông báo lỗi từ backend
                 String responseBody = e.getResponseBodyAsString();
-                if (responseBody.contains("username")) {
-                    errorMsg = "Tên đăng nhập đã tồn tại hoặc không hợp lệ.";
-                } else if (responseBody.contains("email")) {
-                    errorMsg = "Email đã được sử dụng hoặc không hợp lệ.";
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                ApiResponse<?> apiResponse = mapper.readValue(responseBody, ApiResponse.class);
+                if (apiResponse != null && apiResponse.getMessage() != null) {
+                    errorMsg = apiResponse.getMessage();
                 }
             } catch (Exception ex) {
-                // Ignore
+                try {
+                    String responseBody = e.getResponseBodyAsString();
+                    if (responseBody.contains("message\":\"")) {
+                        int start = responseBody.indexOf("message\":\"") + 10;
+                        int end = responseBody.indexOf("\"", start);
+                        errorMsg = responseBody.substring(start, end);
+                    }
+                } catch (Exception ex2) {
+                    // Ignore
+                }
             }
             model.addAttribute("error", errorMsg);
             model.addAttribute("registerRequest", request);

@@ -3,38 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Thống Kê - TINHNGUYEN.com</title>
+    <title>Thống Kê & Xếp Hạng - TINHNGUYEN.com</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #2563eb;
+            --primary-bg: #eff6ff;
+            --success: #0d9488;
+            --success-light: #ccfbf1;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --danger: #f43f5e;
+            --danger-light: #ffe4e6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark);
+        }
+
+        .navbar-brand {
+            color: var(--primary) !important;
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Hero Header */
+        .hero-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 40px 0;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.1);
+            margin-bottom: 40px;
+        }
+
+        /* Premium Cards */
+        .premium-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 24px;
+        }
+
+        .premium-card:hover {
+            box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .stats-icon-wrapper {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Leaderboard table custom styling */
+        .table-responsive {
+            border-radius: 16px;
+        }
+
+        .table th {
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            padding: 18px 24px;
+            background-color: #f8fafc;
+        }
+
+        .table td {
+            padding: 18px 24px;
+            vertical-align: middle;
+        }
+
+        /* Medal Badges */
+        .medal-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .medal-gold {
+            background: linear-gradient(135deg, #fef08a 0%, #eab308 100%);
+            color: #854d0e;
+            border: 2px solid #fef08a;
+        }
+
+        .medal-silver {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            color: #475569;
+            border: 2px solid #e2e8f0;
+        }
+
+        .medal-bronze {
+            background: linear-gradient(135deg, #ffedd5 0%, #ea580c 100%);
+            color: #7c2d12;
+            border: 2px solid #ffedd5;
+        }
+
+        .medal-normal {
+            background-color: #f1f5f9;
+            color: #64748b;
+        }
+
+        .btn-premium {
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+    </style>
 </head>
 <body>
+
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
         <div class="container">
-            <a class="navbar-brand text-primary fw-bold" th:href="@{/}">
+            <a class="navbar-brand" th:href="@{/}">
                 TINH<strong>NGUYEN</strong>.com
             </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Trang Chủ</a>
+                        <a class="nav-link" th:href="@{/}"><i class="fas fa-home me-1"></i> Trang Chủ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/activities}">Quản Lý Hoạt Động</a>
+                        <a class="nav-link" th:href="@{/activities}"><i class="fas fa-heart me-1"></i> Quản Lý Hoạt Động</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/statistics}">Thống Kê</a>
+                        <a class="nav-link" th:href="@{/registrations}"><i class="fas fa-list me-1"></i> Quản Lý Đăng Ký</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/users}">
-                            <i class="fas fa-users"></i> Quản Lý Người Dùng
-                        </a>
+                        <a class="nav-link active text-primary fw-bold" th:href="@{/statistics}"><i class="fas fa-trophy me-1"></i> Thống Kê & Xếp Hạng</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/logout}">
-                            <i class="fas fa-sign-out-alt"></i> Đăng Xuất
+                        <a class="nav-link" th:href="@{/users}"><i class="fas fa-users me-1"></i> Quản Lý Người Dùng</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a th:href="@{/logout}" class="btn btn-outline-danger btn-premium py-2 px-3">
+                            <i class="fas fa-sign-out-alt me-1"></i> Đăng Xuất
                         </a>
                     </li>
                 </ul>
@@ -42,101 +178,137 @@
         </div>
     </nav>
 
-    <div class="container my-4">
-        <!-- Header -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body text-center">
-                <h2 class="card-title text-primary mb-3">
-                    <i class="fas fa-trophy"></i> THỐNG KÊ TỔNG QUAN
-                </h2>
-                <p class="text-muted mb-0">Bảng thông tin hoạt động và xếp hạng sinh viên</p>
+    <!-- Hero Header -->
+    <div class="hero-header">
+        <div class="container text-center">
+            <h1 class="display-6 fw-extrabold mb-2"><i class="fas fa-trophy me-2 text-warning"></i> THỐNG KÊ & BẢNG XẾP HẠNG</h1>
+            <p class="lead mb-0 text-white-50">Tôn vinh các tình nguyện viên xuất sắc và cập nhật số liệu hoạt động</p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        
+        <!-- SECTION 1: System Indicator Stats (ADMIN only to prevent 403 for students) -->
+        <div class="row" th:if="${session.USER_ROLE == 'ADMIN'}">
+            
+            <div class="col-md-3 col-sm-6">
+                <div class="premium-card p-4">
+                    <div class="stats-icon-wrapper text-primary bg-primary bg-opacity-10">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <small class="text-muted d-block uppercase fw-semibold mb-1">Tổng Hoạt Động</small>
+                    <h2 class="fw-bold text-dark mb-0" th:text="${stats.totalActivities}">0</h2>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="premium-card p-4">
+                    <div class="stats-icon-wrapper text-success bg-success bg-opacity-10">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <small class="text-muted d-block uppercase fw-semibold mb-1">Tình Nguyện Viên</small>
+                    <h2 class="fw-bold text-dark mb-0" th:text="${stats.totalStudents}">0</h2>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="premium-card p-4">
+                    <div class="stats-icon-wrapper text-warning bg-warning bg-opacity-10">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <small class="text-muted d-block uppercase fw-semibold mb-1">Ban Tổ Chức</small>
+                    <h2 class="fw-bold text-dark mb-0" th:text="${stats.totalOrganizations}">0</h2>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="premium-card p-4">
+                    <div class="stats-icon-wrapper text-danger bg-danger bg-opacity-10">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <small class="text-muted d-block uppercase fw-semibold mb-1">Tỷ Lệ Hoàn Thành</small>
+                    <h2 class="fw-bold text-dark mb-0" th:text="${#numbers.formatDecimal(stats.completionRate, 1, 1)} + '%'">0%</h2>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SECTION 2: Welcoming Message for Non-Admin roles -->
+        <div class="premium-card p-4 mb-4 border-0" th:if="${session.USER_ROLE != 'ADMIN'}">
+            <div class="d-flex align-items-center gap-3">
+                <div class="stats-icon-wrapper bg-primary bg-opacity-10 text-primary mb-0" style="width: 60px; height: 60px; font-size: 1.8rem; border-radius: 16px;">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-1" th:text="'Chào mừng, ' + ${session.USERNAME} + '!'">Xin chào, Tình nguyện viên!</h5>
+                    <p class="text-secondary small mb-0">Hãy tích cực tham gia các hoạt động tình nguyện ý nghĩa để lọt vào Bảng vàng Vinh danh bên dưới nhé.</p>
+                </div>
             </div>
         </div>
 
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card text-center bg-primary text-white shadow-sm">
-                    <div class="card-body">
-                        <i class="fas fa-heart fa-2x mb-2"></i>
-                        <h4 th:text="${stats.totalActivities}">0</h4>
-                        <p class="mb-0">Tổng Hoạt Động</p>
-                    </div>
-                </div>
+        <!-- SECTION 3: Leaderboard (All Users) -->
+        <div class="premium-card">
+            <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-medal text-warning me-2"></i> Bảng Vinh Danh Tình Nguyện Viên Xuất Sắc</h5>
+                <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill font-monospace small"><i class="fas fa-calendar-check me-1"></i> Toàn Thời Gian</span>
             </div>
-            <div class="col-md-3">
-                <div class="card text-center bg-success text-white shadow-sm">
-                    <div class="card-body">
-                        <i class="fas fa-users fa-2x mb-2"></i>
-                        <h4 th:text="${stats.totalStudents}">0</h4>
-                        <p class="mb-0">Sinh viên tham gia</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center bg-info text-white shadow-sm">
-                    <div class="card-body">
-                        <i class="fas fa-check-circle fa-2x mb-2"></i>
-                        <h4 th:text="${#numbers.formatDecimal(stats.completionRate, 1, 1)} + '%'">0%</h4>
-                        <p class="mb-0">Tỷ lệ hoàn thành</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center bg-warning text-white shadow-sm">
-                    <div class="card-body">
-                        <i class="fas fa-star fa-2x mb-2"></i>
-                        <h4 th:text="${stats.totalRewardPoints}">0</h4>
-                        <p class="mb-0">Tổng điểm thưởng</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Top Students Table -->
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title mb-4">
-                    <i class="fas fa-trophy text-warning"></i> Top Sinh viên tích cực nhất
-                </h5>
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-light">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
                             <tr>
-                                <th>Hạng</th>
-                                <th>Họ tên</th>
-                                <th>Email</th>
-                                <th>Số hoạt động tham gia</th>
-                                <th>Số hoạt động hoàn thành</th>
-                                <th>Điểm tích lũy</th>
+                                <th class="text-center" style="width: 100px;">Hạng</th>
+                                <th>Họ tên Sinh Viên</th>
+                                <th>Email liên hệ</th>
+                                <th class="text-center">Số Hoạt Động Đã Đăng Ký</th>
+                                <th class="text-center">Số Hoạt Động Đã Hoàn Thành</th>
+                                <th class="text-center">Điểm Rèn Luyện Tích Lũy</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="student, iterStat : ${topStudents}" th:class="${iterStat.index == 0} ? 'table-warning' : ''">
-                                <td>
-                                    <span th:if="${iterStat.index == 0}" class="badge bg-warning text-dark fs-6">
-                                        <i class="fas fa-crown"></i> 1
-                                    </span>
-                                    <span th:if="${iterStat.index > 0}" class="badge bg-secondary" th:text="${iterStat.index + 1}">2</span>
+                            <tr th:each="student, iterStat : ${topStudents}">
+                                <td class="text-center">
+                                    <!-- Gold -->
+                                    <div class="medal-badge medal-gold" th:if="${iterStat.index == 0}" title="Quán quân">
+                                        <i class="fas fa-crown"></i>
+                                    </div>
+                                    <!-- Silver -->
+                                    <div class="medal-badge medal-silver" th:if="${iterStat.index == 1}" title="Á quân 1">
+                                        2
+                                    </div>
+                                    <!-- Bronze -->
+                                    <div class="medal-badge medal-bronze" th:if="${iterStat.index == 2}" title="Á quân 2">
+                                        3
+                                    </div>
+                                    <!-- Normal -->
+                                    <div class="medal-badge medal-normal" th:if="${iterStat.index > 2}" th:text="${iterStat.index + 1}">
+                                        4
+                                    </div>
                                 </td>
-                                <td><strong th:text="${student.fullName}">Nguyễn Văn A</strong></td>
-                                <td th:text="${student.email}">student@example.com</td>
-                                <td><span class="badge bg-primary" th:text="${student.totalActivities}">10</span></td>
-                                <td><span class="badge bg-success" th:text="${student.completedActivities}">8</span></td>
                                 <td>
-                                    <span th:class="${iterStat.index == 0} ? 'badge bg-warning text-dark fs-6' : 'badge bg-success'">
-                                        <i class="fas fa-star"></i> <span th:text="${student.totalPoints}">100</span>
+                                    <strong class="text-dark" th:text="${student.fullName}">Họ Tên</strong>
+                                </td>
+                                <td class="text-secondary" th:text="${student.email}">email@example.com</td>
+                                <td class="text-center font-monospace fw-bold text-secondary" th:text="${student.totalActivities}">10</td>
+                                <td class="text-center font-monospace fw-bold text-success" th:text="${student.completedActivities}">8</td>
+                                <td class="text-center">
+                                    <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill fw-bold border border-warning border-opacity-25" style="font-size:0.9rem;">
+                                        <i class="fas fa-star me-1"></i> <span th:text="${student.totalPoints}">100</span>
                                     </span>
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(topStudents)}">
-                                <td colspan="6" class="text-center text-muted">Chưa có dữ liệu xếp hạng sinh viên.</td>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="fas fa-trophy fa-3x mb-3 text-secondary" style="opacity: 0.4;"></i>
+                                    <p class="mb-0">Chưa có dữ liệu bảng xếp hạng học kỳ này.</p>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+
     </div>
 
     <!-- Bootstrap JS -->

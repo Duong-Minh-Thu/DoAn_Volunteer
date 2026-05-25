@@ -25,9 +25,13 @@ public class RegistrationService {
     }
 
     public List<Registration> getAllRegistrations() {
+        return List.of();
+    }
+
+    public List<Registration> getMyRegistrations() {
         try {
             ResponseEntity<ApiResponse<PageResponse<Registration>>> response = restTemplate.exchange(
-                    apiUrl,
+                    apiUrl + "/my-activities",
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<ApiResponse<PageResponse<Registration>>>() {}
@@ -36,7 +40,7 @@ public class RegistrationService {
                 return response.getBody().getData().getContent();
             }
         } catch (Exception e) {
-            System.err.println("Error fetching registrations: " + e.getMessage());
+            System.err.println("Error fetching my registrations: " + e.getMessage());
         }
         return List.of();
     }

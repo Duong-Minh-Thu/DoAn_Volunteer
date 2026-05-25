@@ -1,6 +1,7 @@
 package com.night.frontend_.controller;
 
 import com.night.frontend_.service.RegistrationService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,17 @@ public class RegistrationController {
     }
 
     @GetMapping
-    public String listRegistrations(Model model) {
-        model.addAttribute("registrations", registrationService.getAllRegistrations());
+    public String listRegistrations(HttpSession session, Model model) {
+        if (session.getAttribute("JWT_TOKEN") == null) {
+            return "redirect:/login";
+        }
+        
+        String role = (String) session.getAttribute("USER_ROLE");
+        if ("STUDENT".equals(role)) {
+            model.addAttribute("registrations", registrationService.getMyRegistrations());
+        } else {
+            model.addAttribute("registrations", java.util.List.of());
+        }
         return "registrations/list";
     }
 

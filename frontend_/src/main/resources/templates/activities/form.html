@@ -3,130 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Thêm/Sửa Hoạt Động - TINHNGUYEN.com</title>
+    <title>Quản Lý Hoạt Động - TINHNGUYEN.com</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #2563eb;
+            --primary-bg: #eff6ff;
+            --success: #0d9488;
+            --success-light: #ccfbf1;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --danger: #f43f5e;
+            --danger-light: #ffe4e6;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark);
+        }
+
+        .navbar-brand {
+            color: var(--primary) !important;
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Hero Header */
+        .hero-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 40px 0;
+            border-radius: 0 0 24px 24px;
+            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.1);
+            margin-bottom: 40px;
+        }
+
+        /* Premium Cards */
+        .premium-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+        }
+
+        .btn-premium {
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            border-color: var(--primary-light);
+        }
+    </style>
 </head>
 <body>
+
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
         <div class="container">
-            <a class="navbar-brand text-primary fw-bold" th:href="@{/}">
+            <a class="navbar-brand" th:href="@{/}">
                 TINH<strong>NGUYEN</strong>.com
             </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Trang Chủ</a>
+                        <a class="nav-link" th:href="@{/}"><i class="fas fa-home me-1"></i> Trang Chủ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/activities}">Quản Lý Hoạt Động</a>
+                        <a class="nav-link active text-primary fw-bold" th:href="@{/activities}"><i class="fas fa-heart me-1"></i> Quản Lý Hoạt Động</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/statistics}">Thống Kê</a>
+                        <a class="nav-link" th:href="@{/registrations}"><i class="fas fa-list me-1"></i> Quản Lý Đăng Ký</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/users}">
-                            <i class="fas fa-users"></i> Quản Lý Người Dùng
-                        </a>
+                        <a class="nav-link" th:href="@{/statistics}"><i class="fas fa-trophy me-1"></i> Thống Kê & Xếp Hạng</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/logout}">
-                            <i class="fas fa-sign-out-alt"></i> Đăng Xuất
+                        <a class="nav-link" th:href="@{/users}"><i class="fas fa-users me-1"></i> Quản Lý Người Dùng</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a th:href="@{/logout}" class="btn btn-outline-danger btn-premium py-2 px-3">
+                            <i class="fas fa-sign-out-alt me-1"></i> Đăng Xuất
                         </a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-    
-    <div class="container my-4">
+
+    <!-- Hero Header -->
+    <div class="hero-header text-center">
+        <div class="container">
+            <h1 class="display-6 fw-extrabold mb-2" th:text="${activity.id == null ? 'THÊM HOẠT ĐỘNG MỚI' : 'CẬP NHẬT HOẠT ĐỘNG'}">QUẢN LÝ HOẠT ĐỘNG</h1>
+            <p class="lead mb-0 text-white-50">Nhập các thông tin chi tiết chương trình tình nguyện để công khai đến sinh viên</p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="card-title mb-0">
-                            <i class="fas fa-plus-circle"></i> <span th:text="${activity.id == null ? 'Thêm Hoạt Động Tình Nguyện Mới' : 'Cập Nhật Hoạt Động'}">Thêm Hoạt Động</span>
-                        </h4>
+                
+                <div class="premium-card">
+                    <div class="card-header bg-white border-bottom py-3 px-4">
+                        <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-edit text-primary me-2"></i> Phiếu thông tin chương trình</h5>
                     </div>
                     <div class="card-body p-4">
                         
-                        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}">Lỗi!</div>
+                        <div th:if="${error}" class="alert alert-danger py-3 px-4 border-0 text-danger" style="border-radius:10px; background-color:#ffe4e6;" role="alert" th:text="${error}">Lỗi!</div>
                         
                         <form th:action="@{${activity.id == null ? '/activities/new' : '/activities/' + activity.id + '/edit'}}" th:object="${activity}" method="post">
-                            <div class="row g-3">
+                            <div class="row g-4">
                                 <div class="col-12">
-                                    <label for="title" class="form-label fw-bold">
-                                        <i class="fas fa-tag text-primary"></i> Tên hoạt động <span class="text-danger">*</span>
+                                    <label for="title" class="form-label fw-bold text-dark small">
+                                        <i class="fas fa-heading text-primary me-1"></i> Tên hoạt động tình nguyện <span class="text-danger">*</span>
                                     </label>
                                     <input type="text" class="form-control form-control-lg" id="title" th:field="*{title}" required
-                                           placeholder="VD: Hiến máu nhân đạo...">
+                                           placeholder="Ví dụ: Hiến máu nhân đạo, Mùa hè xanh 2026...">
                                 </div>
                                 
                                 <div class="col-md-6">
-                                    <label for="startDate" class="form-label fw-bold">
-                                        <i class="fas fa-clock text-primary"></i> Ngày Bắt Đầu <span class="text-danger">*</span>
+                                    <label for="startDate" class="form-label fw-bold text-dark small">
+                                        <i class="far fa-calendar-alt text-primary me-1"></i> Ngày Bắt Đầu <span class="text-danger">*</span>
                                     </label>
                                     <input type="datetime-local" class="form-control form-control-lg" id="startDate" th:field="*{startDate}" required>
                                 </div>
                                 
                                 <div class="col-md-6">
-                                    <label for="endDate" class="form-label fw-bold">
-                                        <i class="fas fa-clock text-primary"></i> Ngày Kết Thúc <span class="text-danger">*</span>
+                                    <label for="endDate" class="form-label fw-bold text-dark small">
+                                        <i class="far fa-calendar-check text-primary me-1"></i> Ngày Kết Thúc <span class="text-danger">*</span>
                                     </label>
                                     <input type="datetime-local" class="form-control form-control-lg" id="endDate" th:field="*{endDate}" required>
                                 </div>
                                 
                                 <div class="col-12">
-                                    <label for="location" class="form-label fw-bold">
-                                        <i class="fas fa-map-marker-alt text-primary"></i> Địa điểm <span class="text-danger">*</span>
+                                    <label for="location" class="form-label fw-bold text-dark small">
+                                        <i class="fas fa-map-marker-alt text-danger me-1"></i> Địa điểm tổ chức <span class="text-danger">*</span>
                                     </label>
                                     <input type="text" class="form-control form-control-lg" id="location" th:field="*{location}" required
-                                           placeholder="VD: Trung tâm Y tế...">
+                                           placeholder="Ví dụ: Hội trường B1, Trường Đại học Bách Khoa...">
                                 </div>
                                 
                                 <div class="col-md-6">
-                                    <label for="maxParticipants" class="form-label fw-bold">
-                                        <i class="fas fa-users text-primary"></i> Số lượng tối đa <span class="text-danger">*</span>
+                                    <label for="maxParticipants" class="form-label fw-bold text-dark small">
+                                        <i class="fas fa-users text-primary me-1"></i> Số lượng sinh viên tối đa <span class="text-danger">*</span>
                                     </label>
                                     <input type="number" class="form-control form-control-lg" id="maxParticipants" th:field="*{maxParticipants}" 
-                                           required min="1" placeholder="VD: 30">
+                                           required min="1" placeholder="VD: 50">
                                 </div>
                                 
                                 <div class="col-md-6">
-                                    <label for="points" class="form-label fw-bold">
-                                        <i class="fas fa-star text-primary"></i> Điểm thưởng <span class="text-danger">*</span>
+                                    <label for="points" class="form-label fw-bold text-dark small">
+                                        <i class="fas fa-star text-warning me-1"></i> Điểm rèn luyện tích lũy <span class="text-danger">*</span>
                                     </label>
                                     <input type="number" class="form-control form-control-lg" id="points" th:field="*{points}" 
                                            required min="1" placeholder="VD: 10">
                                 </div>
                                 
                                 <div class="col-12">
-                                    <label for="description" class="form-label fw-bold">
-                                        <i class="fas fa-info-circle text-primary"></i> Mô tả chi tiết <span class="text-danger">*</span>
+                                    <label for="description" class="form-label fw-bold text-dark small">
+                                        <i class="fas fa-align-left text-primary me-1"></i> Mô tả chi tiết chương trình <span class="text-danger">*</span>
                                     </label>
-                                    <textarea class="form-control" id="description" th:field="*{description}" rows="4" required
-                                              placeholder="Mô tả chi tiết về hoạt động, yêu cầu, lưu ý..."></textarea>
+                                    <textarea class="form-control" id="description" th:field="*{description}" rows="5" required
+                                              placeholder="Mô tả cụ thể về mục đích, nội dung công việc, yêu cầu trang phục, và các quyền lợi đi kèm khi sinh viên tham gia..."></textarea>
                                 </div>
                             </div>
                             
                             <hr class="my-4">
                             
                             <div class="d-flex justify-content-between">
-                                <a th:href="@{/activities}" class="btn btn-outline-secondary btn-lg">
-                                    <i class="fas fa-arrow-left"></i> Quay lại
+                                <a th:href="@{/activities}" class="btn btn-outline-secondary btn-premium px-4 py-2">
+                                    <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
                                 </a>
-                                <div>
-                                    <button type="submit" class="btn btn-success btn-lg">
-                                        <i class="fas fa-save"></i> Lưu hoạt động
-                                    </button>
-                                </div>
+                                <button type="submit" class="btn btn-primary btn-premium px-4 py-2">
+                                    <i class="fas fa-save me-1"></i> Lưu hoạt động
+                                </button>
                             </div>
                         </form>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
