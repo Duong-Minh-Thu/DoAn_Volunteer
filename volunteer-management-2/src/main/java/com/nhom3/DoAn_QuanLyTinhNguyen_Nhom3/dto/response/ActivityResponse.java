@@ -18,6 +18,8 @@ public class ActivityResponse {
     private Integer maxParticipants;
     private ActivityStatus status;
     private LocalDateTime createdAt;
+    private String avatar;
+    private String gallery;
 
     public ActivityResponse() {}
 
@@ -57,6 +59,12 @@ public class ActivityResponse {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
+    public String getAvatar() { return avatar; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
+
+    public String getGallery() { return gallery; }
+    public void setGallery(String gallery) { this.gallery = gallery; }
+
     public static ActivityResponse from(Activity activity) {
         ActivityResponse r = new ActivityResponse();
         r.id = activity.getId();
@@ -71,6 +79,8 @@ public class ActivityResponse {
         r.maxParticipants = activity.getMaxParticipants();
         r.status = activity.getStatus();
         r.createdAt = activity.getCreatedAt();
+        r.avatar = activity.getAvatar();
+        r.gallery = activity.getGallery();
         return r;
     }
 
@@ -91,6 +101,8 @@ public class ActivityResponse {
         public Builder maxParticipants(Integer val) { r.maxParticipants = val; return this; }
         public Builder status(ActivityStatus val) { r.status = val; return this; }
         public Builder createdAt(LocalDateTime val) { r.createdAt = val; return this; }
+        public Builder avatar(String val) { r.avatar = val; return this; }
+        public Builder gallery(String val) { r.gallery = val; return this; }
 
         public ActivityResponse build() { return r; }
     }

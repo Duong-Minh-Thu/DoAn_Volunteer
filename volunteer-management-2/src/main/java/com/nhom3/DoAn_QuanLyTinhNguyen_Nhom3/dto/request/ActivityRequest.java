@@ -30,6 +30,10 @@ public class ActivityRequest {
 
     private ActivityStatus status;
 
+    private String avatar;
+
+    private String gallery;
+
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
@@ -53,4 +57,10 @@ public class ActivityRequest {
 
     public ActivityStatus getStatus() { return status; }
     public void setStatus(ActivityStatus status) { this.status = status; }
+
+    public String getAvatar() { return avatar; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
+
+    public String getGallery() { return gallery; }
+    public void setGallery(String gallery) { this.gallery = gallery; }
 }

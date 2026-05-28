@@ -33,4 +33,13 @@ public class ActivityRequest {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    private String avatar;
+    private String gallery;
+
+    public String getAvatar() { return avatar; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
+
+    public String getGallery() { return gallery; }
+    public void setGallery(String gallery) { this.gallery = gallery; }
 }

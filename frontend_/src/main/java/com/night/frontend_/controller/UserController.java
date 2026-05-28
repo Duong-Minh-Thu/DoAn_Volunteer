@@ -28,4 +28,14 @@ public class UserController {
         model.addAttribute("user", userService.getUserById(id));
         return "users/detail";
     }
+
+    @org.springframework.web.bind.annotation.PostMapping("/{id}/update")
+    public String updateUser(
+            @PathVariable Long id,
+            @org.springframework.web.bind.annotation.RequestParam("fullName") String fullName,
+            @org.springframework.web.bind.annotation.RequestParam("email") String email,
+            @org.springframework.web.bind.annotation.RequestParam("role") String role) {
+        userService.updateUser(id, fullName, email, role);
+        return "redirect:/users/" + id;
+    }
 }

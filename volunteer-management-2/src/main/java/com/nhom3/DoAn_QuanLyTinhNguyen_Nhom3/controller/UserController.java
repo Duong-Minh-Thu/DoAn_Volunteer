@@ -47,6 +47,15 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success("Cập nhật thành công", response));
     }
 
+    @Operation(summary = "Cập nhật avatar cá nhân (Base64)")
+    @PutMapping("/profile/avatar")
+    public ResponseEntity<ApiResponse<UserResponse>> updateAvatar(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody String avatarBase64) {
+        UserResponse response = userService.updateAvatar(userDetails.getUsername(), avatarBase64);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật avatar thành công", response));
+    }
+
     // ==================== Admin: Quản lý người dùng ====================
 
     @Operation(summary = "Lấy danh sách tất cả người dùng (chỉ ADMIN)")

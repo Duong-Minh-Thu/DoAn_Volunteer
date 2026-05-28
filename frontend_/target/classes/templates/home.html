@@ -141,7 +141,31 @@
                 <!-- Welcome Section -->
                 <div class="premium-card p-5 text-center">
                     <div class="mb-4">
-                        <i class="fas fa-user-circle fa-4x text-primary mb-3"></i>
+                        <!-- Premium Interactive Avatar Uploader -->
+                        <div class="position-relative d-inline-block mb-3" style="cursor: pointer;" onclick="triggerAvatarUpload()">
+                            <!-- Avatar Image Container -->
+                            <div class="avatar-container position-relative overflow-hidden rounded-circle border shadow-sm mx-auto" style="width: 130px; height: 130px; background-color: #f8fafc; transition: all 0.3s ease;">
+                                <img id="profileAvatarImg" th:src="${profile != null && profile.avatar != null ? profile.avatar : ''}" 
+                                     class="w-100 h-100 object-fit-cover" alt="Avatar"
+                                     th:style="${profile != null && profile.avatar != null ? 'display: block;' : 'display: none;'}">
+                                <div id="avatarPlaceholder" class="w-100 h-100 d-flex align-items-center justify-content-center text-primary"
+                                     th:style="${profile != null && profile.avatar != null ? 'display: none;' : 'display: flex;'}">
+                                    <i class="fas fa-user-circle fa-7x" style="font-size: 8rem; line-height: 130px;"></i>
+                                </div>
+                                <!-- Hover Camera Overlay -->
+                                <div class="avatar-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white bg-dark bg-opacity-50" style="opacity: 0; transition: opacity 0.25s ease;">
+                                    <i class="fas fa-camera fa-2x mb-1"></i>
+                                    <span class="small fw-semibold" style="font-size: 0.75rem;">Tải ảnh lên</span>
+                                </div>
+                            </div>
+                            <!-- Hidden File Input -->
+                            <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="handleAvatarSelected()">
+                            <!-- Hidden Form to submit avatar -->
+                            <form id="avatarUploadForm" th:action="@{/profile/avatar}" method="POST" style="display: none;">
+                                <input type="hidden" name="avatar" id="avatarBase64Input">
+                            </form>
+                        </div>
+
                         <h2 class="fw-bold mb-2 text-dark" th:text="'Xin chào, ' + ${username} + '!'">Xin chào!</h2>
                         <div class="d-flex justify-content-center align-items-center mb-3">
                             <span class="badge bg-primary bg-opacity-10 text-primary fs-6 py-2 px-3 border border-primary border-opacity-25" style="border-radius: 8px;">
@@ -204,5 +228,40 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function triggerAvatarUpload() {
+            document.getElementById('avatarFileInput').click();
+        }
+
+        function handleAvatarSelected() {
+            const fileInput = document.getElementById('avatarFileInput');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            // Validate file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert("Kích thước ảnh đại diện không được vượt quá 2MB!");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64String = e.target.result;
+                // Set hidden field and submit form
+                document.getElementById('avatarBase64Input').value = base64String;
+                
+                // Show local image preview immediately
+                const img = document.getElementById('profileAvatarImg');
+                const placeholder = document.getElementById('avatarPlaceholder');
+                img.src = base64String;
+                img.style.display = 'block';
+                placeholder.style.display = 'none';
+
+                // Submit uploader form
+                document.getElementById('avatarUploadForm').submit();
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
 </body>
 </html>
