@@ -71,4 +71,13 @@ public class NotificationController {
         notificationService.deleteNotification(id, userDetails.getUsername());
         return ResponseEntity.ok(ApiResponse.success("Xóa thông báo thành công", null));
     }
+
+    @Operation(summary = "Gửi thông báo tùy chỉnh (Admin gửi cho ALL/ORG, ORG gửi cho STUDENT)")
+    @PostMapping("/send")
+    public ResponseEntity<ApiResponse<Void>> sendCustomNotification(
+            @RequestBody com.nhom3.DoAn_QuanLyTinhNguyen_Nhom3.dto.request.SendNotificationRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        notificationService.sendCustomNotification(userDetails.getUsername(), request);
+        return ResponseEntity.ok(ApiResponse.success("Gửi thông báo thành công", null));
+    }
 }

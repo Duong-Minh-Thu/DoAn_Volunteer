@@ -6,5 +6,6 @@ public enum NotificationType {
     REGISTRATION_REJECTED,  // Đơn đăng ký bị từ chối
     ATTENDANCE_CONFIRMED,   // Điểm danh được xác nhận, điểm rèn luyện cộng
     ACTIVITY_UPDATED,       // Hoạt động được cập nhật
-    ACTIVITY_CANCELLED      // Hoạt động bị hủy
+    ACTIVITY_CANCELLED,     // Hoạt động bị hủy
+    SYSTEM_ALERT            // Thông báo hệ thống / thủ công
 }

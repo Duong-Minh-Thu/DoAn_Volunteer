@@ -127,12 +127,47 @@
             opacity: 1;
             background-color: #e11d48;
         }
+
+        /* Notifications Styling */
+        .dropdown-toggle.no-caret::after {
+            display: none !important;
+        }
+        .notification-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.2s ease;
+            position: relative;
+        }
+        .notification-item:hover {
+            background-color: var(--light);
+        }
+        .notification-item.unread {
+            background-color: var(--primary-bg);
+        }
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+        }
+        .notification-action-btn {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .notification-item:hover .notification-action-btn {
+            opacity: 1;
+        }
     </style>
 </head>
-<body>
+<body style="padding-top: 85px;">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top">
         <div class="container">
             <a class="navbar-brand" th:href="@{/}">
                 TINH<strong>NGUYEN</strong>.com
@@ -155,8 +190,16 @@
                         <a class="nav-link" th:href="@{/statistics}"><i class="fas fa-trophy me-1"></i> Thống Kê & Xếp Hạng</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" th:href="@{/notifications}">
+                            <i class="fas fa-bell me-1"></i> Thông Báo
+                            <span class="badge rounded-pill bg-danger ms-1" id="notificationUnreadCount" style="display: none; font-size: 0.75rem;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" th:if="${session.USER_ROLE == 'ADMIN'}">
                         <a class="nav-link" th:href="@{/users}"><i class="fas fa-users me-1"></i> Quản Lý Người Dùng</a>
                     </li>
+                    
+                    
                     <li class="nav-item ms-lg-3">
                         <a th:href="@{/logout}" class="btn btn-outline-danger btn-premium py-2 px-3">
                             <i class="fas fa-sign-out-alt me-1"></i> Đăng Xuất
@@ -459,6 +502,49 @@
         function deleteGalleryImage(index) {
             galleryImages.splice(index, 1);
             updateGalleryInputAndGrid();
+        }
+    </script>
+
+    
+    <!-- NOTIFICATIONS JAVASCRIPT -->
+    <script th:inline="javascript">
+        const notificationApiUrl = 'http://localhost:8082/api/notifications';
+        
+        function getAuthHeadersForNotif() {
+            const token = /*[[${session.JWT_TOKEN}]]*/ null;
+            let headers = { 'Content-Type': 'application/json' };
+            if (token) {
+                headers['Authorization'] = 'Bearer ' + token;
+            }
+            return headers;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = /*[[${session.JWT_TOKEN}]]*/ null;
+            if (token) {
+                loadNotificationCount();
+                setInterval(loadNotificationCount, 30000);
+            }
+        });
+
+        function loadNotificationCount() {
+            fetch(`http://localhost:8082/api/notifications/unread-count`, { headers: getAuthHeadersForNotif() })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success && res.data) {
+                        const count = res.data.unreadCount;
+                        const badge = document.getElementById('notificationUnreadCount');
+                        if (badge) {
+                            if (count > 0) {
+                                badge.innerText = count;
+                                badge.style.display = 'inline-block';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    }
+                })
+                .catch(err => console.error("Error loading notification count", err));
         }
     </script>
 </body>

@@ -121,4 +121,19 @@ public class UserService {
         }
         return false;
     }
+
+    public boolean deleteUser(Long id) {
+        try {
+            ResponseEntity<ApiResponse<Void>> response = restTemplate.exchange(
+                    apiUrl + "/" + id,
+                    HttpMethod.DELETE,
+                    null,
+                    new ParameterizedTypeReference<ApiResponse<Void>>() {}
+            );
+            return response.getBody() != null && response.getBody().isSuccess();
+        } catch (Exception e) {
+            System.err.println("Error deleting user " + id + ": " + e.getMessage());
+        }
+        return false;
+    }
 }
