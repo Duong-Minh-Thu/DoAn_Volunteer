@@ -169,12 +169,47 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        /* Notifications Styling */
+        .dropdown-toggle.no-caret::after {
+            display: none !important;
+        }
+        .notification-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.2s ease;
+            position: relative;
+        }
+        .notification-item:hover {
+            background-color: var(--light);
+        }
+        .notification-item.unread {
+            background-color: var(--primary-bg);
+        }
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+        }
+        .notification-action-btn {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .notification-item:hover .notification-action-btn {
+            opacity: 1;
+        }
     </style>
 </head>
-<body>
+<body style="padding-top: 85px;">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top">
         <div class="container">
             <a class="navbar-brand" th:href="@{/}">
                 TINH<strong>NGUYEN</strong>.com
@@ -197,8 +232,16 @@
                         <a class="nav-link" th:href="@{/statistics}"><i class="fas fa-trophy me-1"></i> Thống Kê & Xếp Hạng</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" th:href="@{/notifications}">
+                            <i class="fas fa-bell me-1"></i> Thông Báo
+                            <span class="badge rounded-pill bg-danger ms-1" id="notificationUnreadCount" style="display: none; font-size: 0.75rem;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" th:if="${session.USER_ROLE == 'ADMIN'}">
                         <a class="nav-link" th:href="@{/users}"><i class="fas fa-users me-1"></i> Quản Lý Người Dùng</a>
                     </li>
+                    
+                    
                     <li class="nav-item ms-lg-3">
                         <a th:href="@{/logout}" class="btn btn-outline-danger btn-premium py-2 px-3">
                             <i class="fas fa-sign-out-alt me-1"></i> Đăng Xuất
@@ -235,6 +278,14 @@
             <!-- Left Column: Details, Comments, Feedback -->
             <div class="col-lg-8">
                 
+                <!-- Program Banner Image -->
+                <div class="premium-card mb-4" th:if="${activity.avatar != null && !activity.avatar.isEmpty()}">
+                    <img th:src="${activity.avatar.startsWith('data:') || activity.avatar.startsWith('http') ? activity.avatar : #strings.concat('data:image/png;base64,', activity.avatar)}" 
+                         class="w-100" 
+                         style="height: 325px; object-fit: cover;" 
+                         alt="Program Image">
+                </div>
+                
                 <!-- Description Card -->
                 <div class="premium-card">
                     <div class="premium-card-header">
@@ -258,6 +309,18 @@
                                     <strong class="text-dark" th:text="${activity.endDate != null ? #strings.substring(activity.endDate,0,16).replace('T', ' ') : 'N/A'}">15/11/2025 17:00</strong>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Gallery Card -->
+                <div class="premium-card animate-fade-in" th:if="${activity.gallery != null && !activity.gallery.isEmpty()}">
+                    <div class="premium-card-header">
+                        <h5 class="premium-card-title text-primary"><i class="fas fa-images"></i> Album Ảnh Chi Tiết</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row row-cols-2 row-cols-md-3 g-3" id="detailGalleryGrid">
+                            <!-- Populated via Javascript -->
                         </div>
                     </div>
                 </div>
@@ -327,10 +390,24 @@
                         <div class="card border-0 bg-light p-3 rounded-3">
                             <h6 class="fw-bold mb-2">Để lại ý kiến của bạn</h6>
                             <form id="detailCommentForm">
+                                <!-- Attachment Preview Area -->
+                                <div id="commentAttachmentArea" class="mb-2 position-relative" style="display: none; width: fit-content;">
+                                    <img id="commentAttachmentImg" class="rounded border shadow-sm" style="max-height: 100px; max-width: 150px; object-fit: cover;">
+                                    <button type="button" class="btn btn-danger btn-sm rounded-circle position-absolute top-0 start-100 translate-middle" 
+                                            onclick="removeCommentAttachment()" style="width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; padding: 0;">
+                                        <i class="fas fa-times" style="font-size: 0.75rem;"></i>
+                                    </button>
+                                </div>
                                 <div class="input-group">
-                                    <input type="text" class="form-control border-secondary-subtle" id="detailCommentContent" placeholder="Bình luận công khai của bạn..." required>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="triggerCommentAttachment()" title="Đính kèm ảnh / Chụp ảnh">
+                                        <i class="fas fa-camera"></i>
+                                    </button>
+                                    <input type="text" class="form-control border-secondary-subtle" id="detailCommentContent" placeholder="Bình luận công khai hoặc đính kèm ảnh của bạn...">
                                     <button class="btn btn-primary btn-premium px-4" type="submit"><i class="fas fa-paper-plane"></i> Gửi</button>
                                 </div>
+                                <!-- Hidden file & camera capture inputs -->
+                                <input type="file" id="commentAttachmentInput" accept="image/*" style="display: none;" onchange="handleCommentAttachmentSelected(event)">
+                                <input type="hidden" id="commentAttachmentBase64">
                             </form>
                         </div>
                     </div>
@@ -474,6 +551,11 @@
             document.getElementById('detailCommentForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const content = document.getElementById('detailCommentContent').value;
+                const base64 = document.getElementById('commentAttachmentBase64').value;
+                if ((!content || !content.trim()) && !base64) {
+                    showToast("Vui lòng nhập nội dung hoặc đính kèm một bức ảnh!", false);
+                    return;
+                }
                 postComment(content);
             });
 
@@ -760,23 +842,37 @@
                             const deleteBtn = canDelete ? `<button class="btn btn-sm text-danger p-0 ms-3 float-end" onclick="deleteComment(${c.id})" title="Xóa"><i class="fas fa-trash"></i></button>` : '';
                             const replyBtn = `<button class="btn btn-sm text-primary p-0 ms-2 float-end" onclick="toggleReplyForm(${c.id})" title="Phản hồi"><i class="fas fa-reply"></i></button>`;
 
+                            // Avatar source mapping
+                            const avatarSrc = c.studentAvatar ? (c.studentAvatar.startsWith('data:') || c.studentAvatar.startsWith('http') ? c.studentAvatar : 'data:image/png;base64,' + c.studentAvatar) : null;
+                            const avatarHtml = avatarSrc ? `<img src="${avatarSrc}" class="comment-avatar me-2" alt="Avatar">` : `<i class="fas fa-user-circle fa-2x me-2 text-secondary"></i>`;
+
+                            // Comment attachment image
+                            const imageSrc = c.image ? (c.image.startsWith('data:') || c.image.startsWith('http') ? c.image : 'data:image/png;base64,' + c.image) : null;
+                            const imageHtml = imageSrc ? `<div class="mt-2 mb-1"><img src="${imageSrc}" class="comment-attached-img" onclick="openLightbox('${imageSrc}')" alt="Attachment"></div>` : '';
+
                             html += `
                                 <div class="comment-node mb-3">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <strong class="text-primary"><i class="fas fa-user-circle me-1"></i> ${c.studentName || c.username}</strong>
-                                            <span class="badge bg-light text-secondary border ms-2 small" style="font-size:0.75rem;">${c.studentName ? 'Sinh viên' : 'Hệ thống'}</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            ${avatarHtml}
+                                            <div>
+                                                <strong class="text-primary">${c.studentName || c.username}</strong>
+                                                <span class="badge bg-light text-secondary border ms-2 small" style="font-size:0.75rem;">${c.studentName ? 'Sinh viên' : 'Hệ thống'}</span>
+                                            </div>
                                         </div>
                                         <div>
                                             ${replyBtn}
                                             ${deleteBtn}
                                         </div>
                                     </div>
-                                    <p class="my-2 text-dark" style="font-size: 0.95rem;">${c.content}</p>
-                                    <small class="text-muted d-block mb-2"><i class="fas fa-clock me-1"></i> ${date}</small>
+                                    <div class="ms-5 mt-2">
+                                        <p class="my-1 text-dark" style="font-size: 0.95rem;">${c.content}</p>
+                                        ${imageHtml}
+                                        <small class="text-muted d-block mb-2"><i class="fas fa-clock me-1"></i> ${date}</small>
+                                    </div>
                                     
                                     <!-- Child replies button and container -->
-                                    <div class="mt-2">
+                                    <div class="ms-5 mt-2">
                                         <a href="javascript:void(0)" class="text-decoration-none small text-secondary fw-semibold" onclick="loadReplies(${c.id})">
                                             <i class="fas fa-comments me-1"></i> Xem các câu trả lời
                                         </a>
@@ -784,10 +880,23 @@
                                         
                                         <!-- Reply form lồng ghép -->
                                         <div id="reply-form-${c.id}" class="ms-3 mt-2" style="display: none;">
+                                            <!-- Reply Attachment Preview -->
+                                            <div id="replyAttachmentArea-${c.id}" class="mb-2 position-relative" style="display: none; width: fit-content;">
+                                                <img id="replyAttachmentImg-${c.id}" class="rounded border shadow-sm" style="max-height: 80px; max-width: 120px; object-fit: cover;">
+                                                <button type="button" class="btn btn-danger btn-sm rounded-circle position-absolute top-0 start-100 translate-middle" 
+                                                        onclick="removeReplyAttachment(${c.id})" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; padding: 0;">
+                                                    <i class="fas fa-times" style="font-size: 0.7rem;"></i>
+                                                </button>
+                                            </div>
                                             <div class="input-group input-group-sm">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="triggerReplyAttachment(${c.id})" title="Đính kèm ảnh / Chụp ảnh">
+                                                    <i class="fas fa-camera"></i>
+                                                </button>
                                                 <input type="text" class="form-control" id="reply-input-${c.id}" placeholder="Viết phản hồi hỏi đáp...">
                                                 <button class="btn btn-outline-primary" onclick="postReply(${c.id})"><i class="fas fa-paper-plane"></i> Gửi</button>
                                             </div>
+                                            <input type="file" id="replyAttachmentInput-${c.id}" accept="image/*" style="display: none;" onchange="handleReplyAttachmentSelected(event, ${c.id})">
+                                            <input type="hidden" id="replyAttachmentBase64-${c.id}">
                                         </div>
                                     </div>
                                 </div>
@@ -808,10 +917,12 @@
                 return;
             }
 
+            const image = document.getElementById('commentAttachmentBase64').value || null;
+
             fetch(`${apiUrl}/activities/${activityId}/comments`, {
                 method: 'POST',
                 headers: getAuthHeaders(),
-                body: JSON.stringify({ content: content })
+                body: JSON.stringify({ content: content, image: image })
             })
             .then(r => {
                 if (r.status === 403) { alert("Chỉ sinh viên mới có thể thảo luận!"); return null; }
@@ -820,6 +931,7 @@
             .then(data => {
                 if (data && data.success) {
                     document.getElementById('detailCommentContent').value = '';
+                    removeCommentAttachment(); // Clear attachment state
                     loadComments();
                     showToast("Đã gửi câu hỏi thảo luận thành công!");
                 } else if (data && data.message) {
@@ -876,13 +988,28 @@
                     let html = '';
                     replies.forEach(r => {
                         const date = new Date(r.createdAt).toLocaleString('vi-VN');
+
+                        // Avatar source mapping
+                        const avatarSrc = r.studentAvatar ? (r.studentAvatar.startsWith('data:') || r.studentAvatar.startsWith('http') ? r.studentAvatar : 'data:image/png;base64,' + r.studentAvatar) : null;
+                        const avatarHtml = avatarSrc ? `<img src="${avatarSrc}" class="reply-avatar me-2" alt="Avatar">` : `<i class="fas fa-user-circle fa-lg me-2 text-secondary"></i>`;
+
+                        // Reply attached image
+                        const imageSrc = r.image ? (r.image.startsWith('data:') || r.image.startsWith('http') ? r.image : 'data:image/png;base64,' + r.image) : null;
+                        const imageHtml = imageSrc ? `<div class="mt-2 mb-1"><img src="${imageSrc}" class="comment-attached-img" onclick="openLightbox('${imageSrc}')" alt="Attachment" style="max-height: 100px; max-width: 150px;"></div>` : '';
+
                         html += `
                             <div class="bg-light p-2 rounded-3 border-start border-3 border-primary mb-2" style="font-size:0.85rem;">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <strong class="text-primary"><i class="fas fa-reply text-secondary"></i> ${r.studentName || r.username}</strong>
+                                <div class="d-flex justify-content-between mb-1 align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        ${avatarHtml}
+                                        <strong class="text-primary">${r.studentName || r.username}</strong>
+                                    </div>
                                     <small class="text-muted">${date}</small>
                                 </div>
-                                <p class="mb-0 text-dark">${r.content}</p>
+                                <div class="ms-4">
+                                    <p class="mb-0 text-dark">${r.content}</p>
+                                    ${imageHtml}
+                                </div>
                             </div>
                         `;
                     });
@@ -913,10 +1040,12 @@
             const content = input.value;
             if (!content || !content.trim()) return;
 
+            const image = document.getElementById(`replyAttachmentBase64-${commentId}`).value || null;
+
             fetch(`${apiUrl}/activities/${activityId}/comments/${commentId}/replies`, {
                 method: 'POST',
                 headers: getAuthHeaders(),
-                body: JSON.stringify({ content: content })
+                body: JSON.stringify({ content: content, image: image })
             })
             .then(r => {
                 if (r.status === 403) { alert("Chỉ sinh viên mới có quyền trả lời!"); return null; }
@@ -926,6 +1055,7 @@
                 if (data && data.success) {
                     input.value = '';
                     document.getElementById(`reply-form-${commentId}`).style.display = 'none';
+                    removeReplyAttachment(commentId); // Clear reply attachment state
                     // Force reload replies
                     const container = document.getElementById(`replies-${commentId}`);
                     container.innerHTML = '';
@@ -1034,6 +1164,146 @@
                 showToast("Lỗi kết nối gửi đánh giá", false);
                 console.error(err);
             });
+        }
+
+        // ==================== GALLERY & ATTACHMENT HANDLERS ====================
+
+        // Parse and populate gallery grid
+        document.addEventListener("DOMContentLoaded", function() {
+            const galleryGrid = document.getElementById("detailGalleryGrid");
+            if (galleryGrid) {
+                // Read from thymeleaf binding (injected as serialized string or string literal)
+                const galleryRaw = `[[${activity.gallery}]]`;
+                if (galleryRaw && galleryRaw.trim() !== "" && galleryRaw !== "null" && galleryRaw !== "[]") {
+                    try {
+                        const images = JSON.parse(galleryRaw);
+                        if (Array.isArray(images) && images.length > 0) {
+                            let galleryHtml = "";
+                            images.forEach(img => {
+                                const src = img.startsWith("data:") || img.startsWith("http") ? img : "data:image/png;base64," + img;
+                                galleryHtml += `
+                                    <div class="col">
+                                        <div class="detail-gallery-thumb" onclick="openLightbox('${src}')">
+                                            <img src="${src}" alt="Gallery Image">
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                            galleryGrid.innerHTML = galleryHtml;
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse gallery JSON string", e);
+                    }
+                }
+            }
+        });
+
+        // Open Lightbox zoom Modal
+        function openLightbox(src) {
+            const modalEl = document.getElementById('lightboxModal');
+            const imgEl = document.getElementById('lightboxImg');
+            if (modalEl && imgEl) {
+                imgEl.src = src;
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            }
+        }
+
+        // Parent comment attachment actions
+        function triggerCommentAttachment() {
+            document.getElementById('commentAttachmentInput').click();
+        }
+
+        function handleCommentAttachmentSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                document.getElementById('commentAttachmentBase64').value = base64;
+                document.getElementById('commentAttachmentImg').src = base64;
+                document.getElementById('commentAttachmentArea').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeCommentAttachment() {
+            document.getElementById('commentAttachmentBase64').value = '';
+            document.getElementById('commentAttachmentImg').src = '';
+            document.getElementById('commentAttachmentArea').style.display = 'none';
+            document.getElementById('commentAttachmentInput').value = '';
+        }
+
+        // Child reply attachment actions
+        function triggerReplyAttachment(commentId) {
+            document.getElementById(`replyAttachmentInput-${commentId}`).click();
+        }
+
+        function handleReplyAttachmentSelected(event, commentId) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                document.getElementById(`replyAttachmentBase64-${commentId}`).value = base64;
+                document.getElementById(`replyAttachmentImg-${commentId}`).src = base64;
+                document.getElementById(`replyAttachmentArea-${commentId}`).style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeReplyAttachment(commentId) {
+            document.getElementById(`replyAttachmentBase64-${commentId}`).value = '';
+            document.getElementById(`replyAttachmentImg-${commentId}`).src = '';
+            document.getElementById(`replyAttachmentArea-${commentId}`).style.display = 'none';
+            const input = document.getElementById(`replyAttachmentInput-${commentId}`);
+            if (input) input.value = '';
+        }
+    </script>
+
+
+    
+    <!-- NOTIFICATIONS JAVASCRIPT -->
+    <script th:inline="javascript">
+        const notificationApiUrl = 'http://localhost:8082/api/notifications';
+        
+        function getAuthHeadersForNotif() {
+            const token = /*[[${session.JWT_TOKEN}]]*/ null;
+            let headers = { 'Content-Type': 'application/json' };
+            if (token) {
+                headers['Authorization'] = 'Bearer ' + token;
+            }
+            return headers;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = /*[[${session.JWT_TOKEN}]]*/ null;
+            if (token) {
+                loadNotificationCount();
+                setInterval(loadNotificationCount, 30000);
+            }
+        });
+
+        function loadNotificationCount() {
+            fetch(`http://localhost:8082/api/notifications/unread-count`, { headers: getAuthHeadersForNotif() })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success && res.data) {
+                        const count = res.data.unreadCount;
+                        const badge = document.getElementById('notificationUnreadCount');
+                        if (badge) {
+                            if (count > 0) {
+                                badge.innerText = count;
+                                badge.style.display = 'inline-block';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    }
+                })
+                .catch(err => console.error("Error loading notification count", err));
         }
     </script>
 </body>

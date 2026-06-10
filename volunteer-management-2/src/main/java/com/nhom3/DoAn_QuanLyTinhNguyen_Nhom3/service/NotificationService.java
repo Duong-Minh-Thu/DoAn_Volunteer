@@ -9,6 +9,7 @@ import com.nhom3.DoAn_QuanLyTinhNguyen_Nhom3.exception.ForbiddenException;
 import com.nhom3.DoAn_QuanLyTinhNguyen_Nhom3.exception.ResourceNotFoundException;
 import com.nhom3.DoAn_QuanLyTinhNguyen_Nhom3.repository.NotificationRepository;
 import com.nhom3.DoAn_QuanLyTinhNguyen_Nhom3.repository.UserRepository;
+import com.nhom3.DoAn_QuanLyTinhNguyen_Nhom3.repository.RegistrationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,14 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
+    private final RegistrationRepository registrationRepository;
 
     public NotificationService(NotificationRepository notificationRepository,
-                               UserRepository userRepository) {
+                               UserRepository userRepository,
+                               RegistrationRepository registrationRepository) {
         this.notificationRepository = notificationRepository;
         this.userRepository = userRepository;
+        this.registrationRepository = registrationRepository;
     }
 
     // ==================== Gửi thông báo (nội bộ) ====================
@@ -124,6 +128,42 @@ public class NotificationService {
         }
 
         notificationRepository.delete(notification);
+    }
+
+    /**
+     * Gửi thông báo tùy chỉnh dựa trên vai trò của người gửi.
+     */
+    @Transactional
+    public void sendCustomNotification(String senderUsername, com.nhom3.DoAn_QuanLyTinhNguyen_Nhom3.dto.request.SendNotificationRequest req) {
+        User sender = findUser(senderUsername);
+        
+        List<User> recipients;
+        if (sender.getRole() == Role.ORG) {
+            if (!"REGISTERED_STUDENTS".equalsIgnoreCase(req.getTargetType())) {
+                throw new ForbiddenException("Tài khoản Ban tổ chức chỉ được phép thông báo cho sinh viên đã đăng ký hoạt động!");
+            }
+            recipients = registrationRepository.findStudentsByOrgId(sender.getId());
+        } else if (sender.getRole() == Role.ADMIN) {
+            if ("STUDENTS".equalsIgnoreCase(req.getTargetType())) {
+                recipients = userRepository.findByRole(Role.STUDENT);
+            } else if ("ORGS".equalsIgnoreCase(req.getTargetType())) {
+                recipients = userRepository.findByRole(Role.ORG);
+            } else if ("ALL".equalsIgnoreCase(req.getTargetType())) {
+                recipients = userRepository.findAll().stream()
+                        .filter(u -> u.getRole() == Role.STUDENT || u.getRole() == Role.ORG)
+                        .toList();
+            } else {
+                throw new IllegalArgumentException("Đối tượng nhận thông báo không hợp lệ!");
+            }
+        } else {
+            throw new ForbiddenException("Bạn không có quyền gửi thông báo!");
+        }
+
+        if (recipients.isEmpty()) {
+            return;
+        }
+
+        sendToAll(recipients, NotificationType.SYSTEM_ALERT, req.getTitle(), req.getMessage(), null);
     }
 
     // ==================== Helper ====================

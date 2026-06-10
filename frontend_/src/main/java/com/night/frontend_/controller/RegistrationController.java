@@ -34,7 +34,10 @@ public class RegistrationController {
     }
 
     @GetMapping("/{id}")
-    public String registrationDetail(@PathVariable Long id, Model model) {
+    public String registrationDetail(@PathVariable Long id, HttpSession session, Model model) {
+        if (session.getAttribute("JWT_TOKEN") == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("registration", registrationService.getRegistrationById(id));
         return "registrations/detail";
     }

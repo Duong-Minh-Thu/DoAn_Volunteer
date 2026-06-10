@@ -11,6 +11,8 @@ public class CommentResponse {
     private String studentName;
     private String username;
     private String content;
+    private String studentAvatar;
+    private String image;
     private Long parentCommentId; // null = bình luận gốc
     private long replyCount; // số lượng reply (chỉ dùng cho comment gốc)
     private LocalDateTime createdAt;
@@ -31,6 +33,8 @@ public class CommentResponse {
         r.studentName = comment.getStudent().getFullName();
         r.username = comment.getStudent().getUsername();
         r.content = comment.getContent();
+        r.studentAvatar = comment.getStudent().getAvatar();
+        r.image = comment.getImage();
         r.parentCommentId = comment.getParentComment() != null ? comment.getParentComment().getId() : null;
         r.replyCount = replyCount;
         r.createdAt = comment.getCreatedAt();
@@ -85,6 +89,22 @@ public class CommentResponse {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getStudentAvatar() {
+        return studentAvatar;
+    }
+
+    public void setStudentAvatar(String studentAvatar) {
+        this.studentAvatar = studentAvatar;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Long getParentCommentId() {

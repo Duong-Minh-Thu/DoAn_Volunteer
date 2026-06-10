@@ -7,6 +7,7 @@ public class User {
     private String fullName;
     private String role;
     private String studentCode;
+    private String avatar;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -25,4 +26,7 @@ public class User {
 
     public String getStudentCode() { return studentCode; }
     public void setStudentCode(String studentCode) { this.studentCode = studentCode; }
+
+    public String getAvatar() { return avatar; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
 }

@@ -47,6 +47,14 @@ public class Activity {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Lob
+    @Column(name = "avatar", columnDefinition = "LONGTEXT")
+    private String avatar;
+
+    @Lob
+    @Column(name = "gallery", columnDefinition = "LONGTEXT")
+    private String gallery;
+
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Registration> registrations = new ArrayList<>();
 
@@ -93,6 +101,12 @@ public class Activity {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 
+    public String getAvatar() { return avatar; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
+
+    public String getGallery() { return gallery; }
+    public void setGallery(String gallery) { this.gallery = gallery; }
+
     public List<Registration> getRegistrations() { return registrations; }
     public List<Feedback> getFeedbacks() { return feedbacks; }
 
@@ -111,6 +125,8 @@ public class Activity {
         public Builder points(Integer val) { a.points = val; return this; }
         public Builder maxParticipants(Integer val) { a.maxParticipants = val; return this; }
         public Builder status(ActivityStatus val) { a.status = val; return this; }
+        public Builder avatar(String val) { a.avatar = val; return this; }
+        public Builder gallery(String val) { a.gallery = val; return this; }
 
         public Activity build() { return a; }
     }

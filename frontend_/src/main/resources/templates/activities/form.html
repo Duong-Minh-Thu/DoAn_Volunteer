@@ -77,12 +77,97 @@
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
             border-color: var(--primary-light);
         }
+
+        /* Cover and Gallery Styles */
+        #coverDropZone.dragover {
+            border-color: var(--primary-light) !important;
+            background-color: var(--primary-bg) !important;
+        }
+        #coverDropZone:hover #coverOverlay {
+            opacity: 1 !important;
+        }
+        .gallery-thumb {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+        .gallery-thumb:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .gallery-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .gallery-thumb .delete-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: var(--danger);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 0.8rem;
+        }
+        .gallery-thumb .delete-btn:hover {
+            opacity: 1;
+            background-color: #e11d48;
+        }
+
+        /* Notifications Styling */
+        .dropdown-toggle.no-caret::after {
+            display: none !important;
+        }
+        .notification-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.2s ease;
+            position: relative;
+        }
+        .notification-item:hover {
+            background-color: var(--light);
+        }
+        .notification-item.unread {
+            background-color: var(--primary-bg);
+        }
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+        }
+        .notification-action-btn {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .notification-item:hover .notification-action-btn {
+            opacity: 1;
+        }
     </style>
 </head>
-<body>
+<body style="padding-top: 85px;">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 fixed-top">
         <div class="container">
             <a class="navbar-brand" th:href="@{/}">
                 TINH<strong>NGUYEN</strong>.com
@@ -105,8 +190,16 @@
                         <a class="nav-link" th:href="@{/statistics}"><i class="fas fa-trophy me-1"></i> Thống Kê & Xếp Hạng</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" th:href="@{/notifications}">
+                            <i class="fas fa-bell me-1"></i> Thông Báo
+                            <span class="badge rounded-pill bg-danger ms-1" id="notificationUnreadCount" style="display: none; font-size: 0.75rem;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" th:if="${session.USER_ROLE == 'ADMIN'}">
                         <a class="nav-link" th:href="@{/users}"><i class="fas fa-users me-1"></i> Quản Lý Người Dùng</a>
                     </li>
+                    
+                    
                     <li class="nav-item ms-lg-3">
                         <a th:href="@{/logout}" class="btn btn-outline-danger btn-premium py-2 px-3">
                             <i class="fas fa-sign-out-alt me-1"></i> Đăng Xuất
@@ -139,6 +232,40 @@
                         
                         <form th:action="@{${activity.id == null ? '/activities/new' : '/activities/' + activity.id + '/edit'}}" th:object="${activity}" method="post">
                             <div class="row g-4">
+                                <div class="col-12">
+                                    <label class="form-label fw-bold text-dark small">
+                                        <i class="fas fa-image text-primary me-1"></i> Ảnh bìa hoạt động (Cover Photo)
+                                    </label>
+                                    <!-- Drag and Drop Zone -->
+                                    <div id="coverDropZone" class="border border-2 border-dashed rounded-3 p-4 text-center bg-light position-relative" 
+                                         style="cursor: pointer; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.25s ease;"
+                                         onclick="triggerCoverFile()">
+                                        
+                                        <!-- Image Preview -->
+                                        <img id="coverPreview" th:src="*{avatar != null ? avatar : ''}" 
+                                             class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover rounded-3" 
+                                             th:style="*{avatar != null && avatar != '' ? 'display: block;' : 'display: none;'}">
+                                        
+                                        <div id="coverPrompt" th:style="*{avatar != null && avatar != '' ? 'display: none;' : 'display: block;'}">
+                                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                            <h6 class="fw-bold mb-1">Kéo & thả ảnh bìa hoặc Click để chọn</h6>
+                                            <p class="text-muted small mb-0">Hỗ trợ JPG, PNG, GIF. Tối đa 2MB.</p>
+                                        </div>
+
+                                        <!-- Hover edit overlay -->
+                                        <div id="coverOverlay" class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 text-white d-flex align-items-center justify-content-center"
+                                             style="opacity: 0; transition: opacity 0.2s ease; border-radius: 12px;">
+                                            <div class="text-center">
+                                                <i class="fas fa-edit fa-2x mb-1"></i>
+                                                <div>Thay đổi ảnh bìa</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Hidden Inputs -->
+                                    <input type="file" id="coverFileInput" accept="image/*" style="display: none;" onchange="handleCoverSelected(event)">
+                                    <input type="hidden" id="coverBase64" th:field="*{avatar}">
+                                </div>
+
                                 <div class="col-12">
                                     <label for="title" class="form-label fw-bold text-dark small">
                                         <i class="fas fa-heading text-primary me-1"></i> Tên hoạt động tình nguyện <span class="text-danger">*</span>
@@ -192,6 +319,28 @@
                                     <textarea class="form-control" id="description" th:field="*{description}" rows="5" required
                                               placeholder="Mô tả cụ thể về mục đích, nội dung công việc, yêu cầu trang phục, và các quyền lợi đi kèm khi sinh viên tham gia..."></textarea>
                                 </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold text-dark small">
+                                        <i class="fas fa-images text-primary me-1"></i> Album ảnh chi tiết (Gallery)
+                                    </label>
+                                    
+                                    <!-- Gallery Upload Box -->
+                                    <div class="border border-2 border-dashed rounded-3 p-3 text-center bg-light mb-3" 
+                                         style="cursor: pointer;" onclick="triggerGalleryFile()">
+                                        <i class="fas fa-plus-circle fa-2x text-primary mb-2"></i>
+                                        <h6 class="fw-bold mb-0">Thêm ảnh vào album</h6>
+                                        <p class="text-muted small mb-0">Có thể chọn nhiều ảnh cùng lúc</p>
+                                    </div>
+
+                                    <!-- Gallery Grid Preview -->
+                                    <div class="row row-cols-3 row-cols-md-4 g-3" id="galleryGrid">
+                                        <!-- Pre-populated from server if editing -->
+                                    </div>
+
+                                    <input type="file" id="galleryFileInput" accept="image/*" multiple style="display: none;" onchange="handleGallerySelected(event)">
+                                    <input type="hidden" id="galleryBase64" th:field="*{gallery}">
+                                </div>
                             </div>
                             
                             <hr class="my-4">
@@ -214,5 +363,189 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Cover Photo Handlers
+        function triggerCoverFile() {
+            document.getElementById('coverFileInput').click();
+        }
+
+        function handleCoverSelected(e) {
+            const file = e.target.files[0];
+            if (file) {
+                readAndSetCover(file);
+            }
+        }
+
+        function readAndSetCover(file) {
+            if (file.size > 2 * 1024 * 1024) {
+                alert("Kích thước ảnh bìa không được vượt quá 2MB!");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64 = event.target.result;
+                document.getElementById('coverBase64').value = base64;
+                
+                const preview = document.getElementById('coverPreview');
+                preview.src = base64;
+                preview.style.display = 'block';
+                document.getElementById('coverPrompt').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Drag & Drop event bindings
+        const dropZone = document.getElementById('coverDropZone');
+        if (dropZone) {
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                }, false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const file = dt.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    readAndSetCover(file);
+                }
+            }, false);
+        }
+
+
+        // Gallery Album Handlers
+        let galleryImages = [];
+        const galleryInput = document.getElementById('galleryBase64');
+        const galleryGrid = document.getElementById('galleryGrid');
+
+        // Parse existing gallery images on load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (galleryInput && galleryInput.value) {
+                const val = galleryInput.value;
+                try {
+                    if (val.trim().startsWith('[')) {
+                        galleryImages = JSON.parse(val);
+                    } else {
+                        // Fallback to comma separated
+                        galleryImages = val.split(',').filter(x => x.trim().length > 0);
+                    }
+                } catch (e) {
+                    console.error("Error parsing gallery images", e);
+                    galleryImages = [];
+                }
+                renderGalleryGrid();
+            }
+        });
+
+        function triggerGalleryFile() {
+            document.getElementById('galleryFileInput').click();
+        }
+
+        function handleGallerySelected(e) {
+            const files = Array.from(e.target.files);
+            let processed = 0;
+            const imageFiles = files.filter(f => f.type.startsWith('image/'));
+            
+            if (imageFiles.length === 0) return;
+
+            imageFiles.forEach(file => {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert(`Ảnh "${file.name}" vượt quá giới hạn 2MB!`);
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    galleryImages.push(event.target.result);
+                    processed++;
+                    if (processed === imageFiles.length) {
+                        updateGalleryInputAndGrid();
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+            // Reset the file input so the same files can be re-uploaded if desired
+            e.target.value = '';
+        }
+
+        function updateGalleryInputAndGrid() {
+            galleryInput.value = JSON.stringify(galleryImages);
+            renderGalleryGrid();
+        }
+
+        function renderGalleryGrid() {
+            if (!galleryGrid) return;
+            galleryGrid.innerHTML = '';
+            galleryImages.forEach((imgSrc, index) => {
+                const col = document.createElement('div');
+                col.className = 'col';
+                col.innerHTML = `
+                    <div class="gallery-thumb">
+                        <img src="${imgSrc}" alt="Gallery image">
+                        <button type="button" class="delete-btn" onclick="deleteGalleryImage(${index})" title="Xóa ảnh">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                galleryGrid.appendChild(col);
+            });
+        }
+
+        function deleteGalleryImage(index) {
+            galleryImages.splice(index, 1);
+            updateGalleryInputAndGrid();
+        }
+    </script>
+
+    
+    <!-- NOTIFICATIONS JAVASCRIPT -->
+    <script th:inline="javascript">
+        const notificationApiUrl = 'http://localhost:8082/api/notifications';
+        
+        function getAuthHeadersForNotif() {
+            const token = /*[[${session.JWT_TOKEN}]]*/ null;
+            let headers = { 'Content-Type': 'application/json' };
+            if (token) {
+                headers['Authorization'] = 'Bearer ' + token;
+            }
+            return headers;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = /*[[${session.JWT_TOKEN}]]*/ null;
+            if (token) {
+                loadNotificationCount();
+                setInterval(loadNotificationCount, 30000);
+            }
+        });
+
+        function loadNotificationCount() {
+            fetch(`http://localhost:8082/api/notifications/unread-count`, { headers: getAuthHeadersForNotif() })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success && res.data) {
+                        const count = res.data.unreadCount;
+                        const badge = document.getElementById('notificationUnreadCount');
+                        if (badge) {
+                            if (count > 0) {
+                                badge.innerText = count;
+                                badge.style.display = 'inline-block';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    }
+                })
+                .catch(err => console.error("Error loading notification count", err));
+        }
+    </script>
 </body>
 </html>

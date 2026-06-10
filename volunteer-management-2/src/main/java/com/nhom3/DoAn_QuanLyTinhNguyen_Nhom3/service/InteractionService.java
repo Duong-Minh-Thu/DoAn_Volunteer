@@ -107,6 +107,7 @@ public class InteractionService {
                 .activity(activity)
                 .student(student)
                 .content(request.getContent())
+                .image(request.getImage())
                 .build();
 
         return CommentResponse.from(commentRepository.save(comment));
@@ -167,6 +168,7 @@ public class InteractionService {
                 .activity(activity)
                 .student(student)
                 .content(request.getContent())
+                .image(request.getImage())
                 .parentComment(parent)
                 .build();
 

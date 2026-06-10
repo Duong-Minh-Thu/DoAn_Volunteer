@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.night.frontend_.model.ActivityRequest;
 import com.night.frontend_.model.Activity;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 @Controller
@@ -21,25 +22,37 @@ public class ActivityController {
     }
 
     @GetMapping
-    public String listActivities(Model model) {
+    public String listActivities(HttpSession session, Model model) {
+        if (session.getAttribute("JWT_TOKEN") == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("activities", activityService.getAllActivities());
         return "activities/list";
     }
 
     @GetMapping("/{id}")
-    public String activityDetail(@PathVariable Long id, Model model) {
+    public String activityDetail(@PathVariable Long id, HttpSession session, Model model) {
+        if (session.getAttribute("JWT_TOKEN") == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("activity", activityService.getActivityById(id));
         return "activities/detail";
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(HttpSession session, Model model) {
+        if (session.getAttribute("JWT_TOKEN") == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("activity", new Activity());
         return "activities/form";
     }
 
     @PostMapping("/new")
-    public String createActivity(@ModelAttribute ActivityRequest request, Model model) {
+    public String createActivity(@ModelAttribute ActivityRequest request, HttpSession session, Model model) {
+        if (session.getAttribute("JWT_TOKEN") == null) {
+            return "redirect:/login";
+        }
         boolean success = activityService.createActivity(request);
         if (success) {
             return "redirect:/activities";
@@ -59,7 +72,10 @@ public class ActivityController {
     }
 
     @GetMapping("/{id}/edit")
-    public String showEditForm(@PathVariable Long id, Model model) {
+    public String showEditForm(@PathVariable Long id, HttpSession session, Model model) {
+        if (session.getAttribute("JWT_TOKEN") == null) {
+            return "redirect:/login";
+        }
         Activity activity = activityService.getActivityById(id);
         if (activity == null) {
             return "redirect:/activities";
@@ -69,7 +85,10 @@ public class ActivityController {
     }
 
     @PostMapping("/{id}/edit")
-    public String updateActivity(@PathVariable Long id, @ModelAttribute ActivityRequest request, Model model) {
+    public String updateActivity(@PathVariable Long id, @ModelAttribute ActivityRequest request, HttpSession session, Model model) {
+        if (session.getAttribute("JWT_TOKEN") == null) {
+            return "redirect:/login";
+        }
         boolean success = activityService.updateActivity(id, request);
         if (success) {
             return "redirect:/activities";

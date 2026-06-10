@@ -12,6 +12,7 @@ public class UserResponse {
     private String fullName;
     private Role role;
     private String studentCode;
+    private String avatar;
     private LocalDateTime createdAt;
     private Integer totalTrainingPoints; // tổng điểm rèn luyện tất cả học kỳ
 
@@ -35,6 +36,9 @@ public class UserResponse {
     public String getStudentCode() { return studentCode; }
     public void setStudentCode(String studentCode) { this.studentCode = studentCode; }
 
+    public String getAvatar() { return avatar; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
@@ -50,6 +54,7 @@ public class UserResponse {
         r.fullName = user.getFullName();
         r.role = user.getRole();
         r.studentCode = user.getStudentCode();
+        r.avatar = user.getAvatar();
         r.createdAt = user.getCreatedAt();
         return r;
     }
@@ -72,6 +77,7 @@ public class UserResponse {
         public Builder fullName(String val) { r.fullName = val; return this; }
         public Builder role(Role val) { r.role = val; return this; }
         public Builder studentCode(String val) { r.studentCode = val; return this; }
+        public Builder avatar(String val) { r.avatar = val; return this; }
         public Builder createdAt(LocalDateTime val) { r.createdAt = val; return this; }
         public Builder totalTrainingPoints(Integer val) { r.totalTrainingPoints = val; return this; }
 

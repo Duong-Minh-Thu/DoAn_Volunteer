@@ -58,6 +58,18 @@ public class UserService {
         return UserResponse.from(userRepository.save(user), totalPoints);
     }
 
+    /**
+     * Cập nhật avatar cá nhân (Base64).
+     */
+    @Transactional
+    public UserResponse updateAvatar(String username, String avatarBase64) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy user: " + username));
+        user.setAvatar(avatarBase64);
+        Integer totalPoints = trainingPointRepository.sumTotalPointsByStudent(user.getId());
+        return UserResponse.from(userRepository.save(user), totalPoints);
+    }
+
     // ==================== Admin: Quản lý người dùng ====================
 
     /**

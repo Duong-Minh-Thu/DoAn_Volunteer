@@ -34,6 +34,10 @@ public class User {
     @Column(name = "student_code", unique = true, length = 20)
     private String studentCode;
 
+    @Lob
+    @Column(name = "avatar", columnDefinition = "LONGTEXT")
+    private String avatar;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -114,6 +118,14 @@ public class User {
         this.studentCode = studentCode;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -173,6 +185,11 @@ public class User {
 
         public Builder studentCode(String val) {
             user.studentCode = val;
+            return this;
+        }
+
+        public Builder avatar(String val) {
+            user.avatar = val;
             return this;
         }
 

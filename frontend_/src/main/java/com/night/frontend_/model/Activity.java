@@ -41,4 +41,13 @@ public class Activity {
 
     public String getEndDate() { return endDate; }
     public void setEndDate(String endDate) { this.endDate = endDate; }
+
+    private String avatar;
+    private String gallery;
+
+    public String getAvatar() { return avatar; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
+
+    public String getGallery() { return gallery; }
+    public void setGallery(String gallery) { this.gallery = gallery; }
 }

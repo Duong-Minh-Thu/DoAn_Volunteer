@@ -46,4 +46,8 @@ public interface RegistrationRepository extends JpaRepository<Registration, Long
 
     // Đếm tổng số đăng ký theo status (dùng cho admin dashboard)
     long countByStatus(RegistrationStatus status);
+
+    // Tìm các sinh viên đăng ký hoạt động của một Tổ chức
+    @Query("SELECT DISTINCT r.student FROM Registration r WHERE r.activity.organization.id = :orgId")
+    List<com.nhom3.DoAn_QuanLyTinhNguyen_Nhom3.entity.User> findStudentsByOrgId(@Param("orgId") Long orgId);
 }

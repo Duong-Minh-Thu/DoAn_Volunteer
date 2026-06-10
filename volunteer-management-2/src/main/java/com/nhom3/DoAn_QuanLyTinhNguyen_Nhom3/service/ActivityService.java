@@ -74,6 +74,8 @@ public class ActivityService {
                 .points(request.getPoints() != null ? request.getPoints() : 0)
                 .maxParticipants(request.getMaxParticipants())
                 .status(ActivityStatus.UPCOMING)
+                .avatar(request.getAvatar())
+                .gallery(request.getGallery())
                 .build();
 
         ActivityResponse response = ActivityResponse.from(activityRepository.save(activity));
@@ -111,6 +113,8 @@ public class ActivityService {
         if (request.getPoints() != null) activity.setPoints(request.getPoints());
         if (request.getMaxParticipants() != null) activity.setMaxParticipants(request.getMaxParticipants());
         if (request.getStatus() != null) activity.setStatus(request.getStatus());
+        if (request.getAvatar() != null) activity.setAvatar(request.getAvatar());
+        if (request.getGallery() != null) activity.setGallery(request.getGallery());
 
         return ActivityResponse.from(activityRepository.save(activity));
     }
